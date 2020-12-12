@@ -23,13 +23,12 @@ import com.me.nubid.model.Bid;
 @Controller
 public interface BidHandler {
     
-    @RequestMapping(value = "/v1/placeBid/bid/{bidId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Bid> addNewUser(
-            @PathVariable(value = "bidId") String bidId,
+    @RequestMapping(value = "/v1/placeBid/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Bid> placeBid(
             @RequestBody Bid bid) throws IOException;
     
     @RequestMapping(value = "/v1/fetchBids/prodId/{prodId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String,String>> fetchBidsForProduct(
+    public ResponseEntity<Map<String,Double>> fetchBidsForProduct(
             @PathVariable(value = "prodId") String prodId)
             throws IOException;
 

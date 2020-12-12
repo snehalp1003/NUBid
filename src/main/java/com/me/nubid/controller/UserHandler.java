@@ -20,9 +20,8 @@ import com.me.nubid.model.User;
 @Controller
 public interface UserHandler {
 
-    @RequestMapping(value = "/v1/register/user/{userEmailAddress}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/v1/register/user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> addNewUser(
-            @PathVariable(value = "userEmailAddress") String userEmailAddress,
             @RequestBody User user) throws IOException;
 
     @RequestMapping(value = "/v1/update/user", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)

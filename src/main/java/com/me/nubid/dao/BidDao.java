@@ -41,18 +41,18 @@ public class BidDao extends Dao {
     }
 
     @SuppressWarnings("unchecked")
-    public Map<String, String> getAllBids(String prodId) {
+    public Map<String, Double> getBidsPlacedForProduct(String prodId) {
         try {
             begin();
-            Map<String,String> bidMap = new HashMap<String, String>();
+            Map<String,Double> bidMap = new HashMap<String, Double>();
             Query q = getSession().createQuery(
-                    "select u.userEmailAddress as user, bl.logBidPrice as bidPrice from User u join Bid bl on u.userUuid = bl.logBidderId where bl.logProdId=:id");
+                    "select u.userEmailAddress as user, bl.bidPrice as bidPrice from User u join Bid bl on u.userUuid = bl.bidderId where bl.bidProdId=:id");
             q.setParameter("id", prodId);
             List<Object[]> bids = q.getResultList();
             
             if(bids!=null && !bids.isEmpty()) {
                 for(Object[] bid:bids) {
-                    bidMap.put((String) bid[0], (String) bid[1]);
+                    bidMap.put((String) bid[0], (Double) bid[1]);
                 }
             }
             commit();

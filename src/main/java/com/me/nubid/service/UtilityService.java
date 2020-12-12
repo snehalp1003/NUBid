@@ -19,6 +19,7 @@ public class UtilityService {
     static final String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
     static final String passwordRegex = "((?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%!]).{8,40})";
     static final String phoneNumRegex = "^\\d{10}$";
+    static final String priceRegex = "[0-9]+([,.][0-9]{1,2})?";
     
     public static boolean checkStringNotNull(String in) {
         boolean output = false;
@@ -70,5 +71,14 @@ public class UtilityService {
     
     public static String generateUuid() {
         return UUID.randomUUID().toString();
+    }
+    
+    public static boolean checkIfValidPrice(String price) {
+        boolean output=false;
+        
+        Pattern pattern = Pattern.compile(priceRegex);
+        Matcher matcher = pattern.matcher(price);
+        output = matcher.matches();
+        return output;
     }
 }

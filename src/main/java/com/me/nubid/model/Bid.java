@@ -16,18 +16,20 @@ import javax.persistence.Table;
 @Table(name="Bid")
 public class Bid {
 
+    /**
+     * 
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long bidId;
+    private String bidId;
     private String bidderId;
     private String bidProdId;
     private Double bidPrice;
     private Date bidDate;
     
-    public Long getBidId() {
+    public String getBidId() {
         return bidId;
     }
-    public void setBidId(Long bidId) {
+    public void setBidId(String bidId) {
         this.bidId = bidId;
     }
     public String getBidderId() {

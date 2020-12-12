@@ -36,12 +36,12 @@ public interface ProductHandler {
     public ResponseEntity<Product> fetchProductDetails(
             @PathVariable(value = "prodId") String prodId) throws IOException;
     
-    @RequestMapping(value = "/v1/view/buy", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/v1/view/buy/{uuid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Product>> viewProductsForPurchase(
             @PathVariable(value = "uuid") String uuid)
             throws IOException;
     
-    @RequestMapping(value = "/v1/view/sell", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/v1/view/sell/{uuid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Product>> viewProductsForSelling(
             @PathVariable(value = "uuid") String uuid)
             throws IOException;

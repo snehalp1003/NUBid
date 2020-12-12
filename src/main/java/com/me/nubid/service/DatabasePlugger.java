@@ -108,15 +108,17 @@ public class DatabasePlugger {
         return null;
     }
 
-    public void updateProduct(String prodId, Product prod) {
+    public boolean updateProduct(String prodId, Product prod) {
         if (prodId != null && !prodId.isEmpty() && prod != null) {
             try {
                 if (prodDao.updateProduct(prodId, prod)) {
                     log.info(
                             "*****************************************UPDATED PRODUCT DETAILS !!******************************************");
+                    return true;
                 } else {
                     log.error(
                             "*****************************************Error occured when updating Product Details !!******************************************");
+                    return false;
                 }
             } catch (Exception e) {
                 log.error(
@@ -125,6 +127,7 @@ public class DatabasePlugger {
                         + e.getMessage() + " for prodId : " + prod.getProdId());
             }
         }
+        return false;
     }
 
     public Product getProduct(String prodId) {
@@ -194,11 +197,11 @@ public class DatabasePlugger {
         return null;
     }
 
-    public Map<String, String> getAllBids(String prodId) {
-        Map<String, String> getAllBidsForProd = new HashMap<String, String>();
+    public Map<String, Double> getAllBids(String prodId) {
+        Map<String, Double> getAllBidsForProd = new HashMap<String, Double>();
         if (prodId != null && !prodId.isEmpty()) {
             try {
-                getAllBidsForProd = bidDao.getAllBids(prodId);
+                getAllBidsForProd = bidDao.getBidsPlacedForProduct(prodId);
                 log.info(
                         "*****************************************FETCHED BIDS FOR PRODUCT !!******************************************");
             } catch (Exception e) {

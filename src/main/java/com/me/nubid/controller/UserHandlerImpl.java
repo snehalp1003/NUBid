@@ -34,11 +34,10 @@ public class UserHandlerImpl implements UserHandler {
 
     @Override
     public ResponseEntity<User> addNewUser(
-            @PathVariable(value = "userEmailAddress") String email,
             @RequestBody User user) throws IOException {
-        if (UtilityService.checkStringNotNull(email)
+        if (UtilityService.checkStringNotNull(user.getUserEmailAddress())
                 && UtilityService.checkStringNotNull(user.getUserPassword())) {
-            if (!UtilityService.checkIfValidEmail(email)) {
+            if (!UtilityService.checkIfValidEmail(user.getUserEmailAddress())) {
                 log.error(
                         "********** Email address not in correct format !! **********");
                 return new ResponseEntity(
