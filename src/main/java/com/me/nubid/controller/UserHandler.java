@@ -2,6 +2,9 @@ package com.me.nubid.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,16 +23,25 @@ import com.me.nubid.model.User;
 @Controller
 public interface UserHandler {
 
-    @RequestMapping(value = "/v1/register/user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> addNewUser(
-            @RequestBody User user) throws IOException;
-
-    @RequestMapping(value = "/v1/update/user", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> updateUser(
-            @RequestBody User user) throws IOException;
-
-    @RequestMapping(value = "/v1/get/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> fetchUserDetails(
-            @RequestBody Login login)
+    @RequestMapping(value = "/v1/user/create.htm", method = RequestMethod.GET)
+    public String getUserCreateForm(HttpServletRequest request)
             throws IOException;
+
+    @RequestMapping(value = "/v1/user/register.htm", method = RequestMethod.POST)
+    public String addNewUser(HttpServletRequest request) throws IOException;
+
+    //Pending
+    @RequestMapping(value = "/v1/user/update.htm", method = RequestMethod.PUT)
+    public ResponseEntity<Boolean> updateUser(@RequestBody User user)
+            throws IOException;
+
+    @RequestMapping(value = "/v1/user/home.htm", method = RequestMethod.POST)
+    public String fetchUserDetails(HttpServletRequest request)
+            throws IOException;
+
+    @RequestMapping(value = "/v1/user/logout.htm", method = RequestMethod.GET)
+    public String logoutUser(HttpServletRequest request) throws IOException;
+    
+    @RequestMapping(value = "/v1/user/home.htm", method = RequestMethod.GET)
+    public String goBack(HttpServletRequest request) throws IOException;
 }

@@ -6,6 +6,8 @@ package com.me.nubid.controller;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,14 +24,13 @@ import com.me.nubid.model.Bid;
 
 @Controller
 public interface BidHandler {
-    
-    @RequestMapping(value = "/v1/placeBid/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Bid> placeBid(
-            @RequestBody Bid bid) throws IOException;
-    
-    @RequestMapping(value = "/v1/fetchBids/prodId/{prodId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String,Double>> fetchBidsForProduct(
-            @PathVariable(value = "prodId") String prodId)
+
+    @RequestMapping(value = "/v1/bid/offer.htm", method = RequestMethod.POST)
+    public String placeBid(HttpServletRequest request)
+            throws IOException;
+
+    @RequestMapping(value = "/v1/bids/view.htm", method = RequestMethod.GET)
+    public String fetchBidsForProduct(HttpServletRequest request)
             throws IOException;
 
 }

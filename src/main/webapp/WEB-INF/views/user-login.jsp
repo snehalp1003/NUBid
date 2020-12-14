@@ -1,19 +1,3 @@
-<!-- 
-<html>
-<head>
-	<title>Home</title>
-</head>
-<body>
-<h1>
-	Hello world!  
-</h1>
-
-<P>  The time on the server is ${serverTime}. </P>
-</body>
-</html>
--->
-
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <html>
@@ -58,16 +42,16 @@
 <body>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <h1> NUBid </h1>
-<form action="${contextPath}/user/login.htm" method="POST"> 
+<form action="${contextPath}/v1/user/home.htm" method="POST"> 
 		<table>
 		<tr>
 		    <td>USERNAME:</td>
-		    <td><input type="text" name="username" id="username" maxlength="20" size="30" required="required" /></td>
+		    <td><input type="text" name="username" id="username" maxlength="50" size="30" required="required" /></td>
 		</tr>
 		
 		<tr>
 		    <td>PASSWORD:</td>
-		    <td><input type="password" name="password" id="password" maxlength="20" size="30" required="required"/></td>
+		    <td><input type="password" name="password" id="password" maxlength="50" size="30" required="required"/></td>
 		</tr>
 		
 		<tr>
@@ -80,11 +64,7 @@
 	<div id="info"></div>
 	<br><br><br><br>
 	
-	<a href="${contextPath}/user/create.htm">Create New User Account</a>
-	
-	<br>
-	<a href="${contextPath}/admin/central.htm">I am a System Admin</a>
-	
+	<a href="${contextPath}/v1/user/create.htm">Create New User Account</a>	
 
 </body>
 </html>

@@ -3,8 +3,6 @@ package com.me.nubid.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,9 +14,6 @@ import javax.persistence.Table;
 @Table(name="Bid")
 public class Bid {
 
-    /**
-     * 
-     */
     @Id
     private String bidId;
     private String bidderId;

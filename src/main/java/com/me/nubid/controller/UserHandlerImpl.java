@@ -5,14 +5,17 @@ package com.me.nubid.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.me.nubid.model.Login;
 import com.me.nubid.model.User;
@@ -33,54 +36,68 @@ public class UserHandlerImpl implements UserHandler {
     DatabasePlugger databasePlugger;
 
     @Override
-    public ResponseEntity<User> addNewUser(
-            @RequestBody User user) throws IOException {
-        if (UtilityService.checkStringNotNull(user.getUserEmailAddress())
-                && UtilityService.checkStringNotNull(user.getUserPassword())) {
-            if (!UtilityService.checkIfValidEmail(user.getUserEmailAddress())) {
-                log.error(
-                        "********** Email address not in correct format !! **********");
-                return new ResponseEntity(
-                        "Email address not in correct format !!",
-                        HttpStatus.BAD_REQUEST);
-            } else if (!UtilityService
-                    .checkIfValidPassword(user.getUserPassword())) {
-                log.error(
-                        "********** Password not in correct format !! **********");
-                return new ResponseEntity("Password not in correct format !!",
-                        HttpStatus.BAD_REQUEST);
-            } else if (!UtilityService
-                    .checkIfValidPhoneNum(user.getUserPhoneNum())) {
-                log.error(
-                        "********** Phone number not in correct format !! **********");
-                return new ResponseEntity(
-                        "Phone number not in correct format !!",
-                        HttpStatus.BAD_REQUEST);
-            } else {
-                try {
-                    user.setUserUuid(UtilityService.generateUuid());
-                    user.setUserPassword(UtilityService
-                            .hashPassword(user.getUserPassword()));
-                    return new ResponseEntity<User>(
-                            databasePlugger.addNewUser(user), HttpStatus.OK);
-                } catch (Exception e) {
+    public String getUserCreateForm(HttpServletRequest request) {
+        return "user-create";
+    }
+
+    @Override
+    public String addNewUser(HttpServletRequest request) throws IOException {
+        if (request != null) {
+            User user = new User();
+            user.setUserEmailAddress(request.getParameter("newusername"));
+            user.setUserPassword(request.getParameter("newpassword"));
+            user.setUserFirstName(request.getParameter("newfname"));
+            user.setUserLastName(request.getParameter("newlname"));
+            user.setUserPhoneNum(request.getParameter("newphonenum"));
+            user.setUserAddress(request.getParameter("newaddress"));
+            user.setUserCollege(request.getParameter("newcollege"));
+            user.setUserDept(request.getParameter("newdept"));
+            if (UtilityService.checkStringNotNull(user.getUserEmailAddress())
+                    && UtilityService
+                            .checkStringNotNull(user.getUserPassword())) {
+                if (!UtilityService
+                        .checkIfValidEmail(user.getUserEmailAddress())) {
                     log.error(
-                            "********** Error while registering user !! **********"
-                                    + e.getMessage());
+                            "********** Email address not in correct format !! **********");
+                    return "error";
+                } else if (!UtilityService
+                        .checkIfValidPassword(user.getUserPassword())) {
+                    log.error(
+                            "********** Password not in correct format !! **********");
+                    return "error";
+                } else if (!UtilityService
+                        .checkIfValidPhoneNum(user.getUserPhoneNum())) {
+                    log.error(
+                            "********** Phone number not in correct format !! **********");
+                    return "error";
+                } else {
+                    try {
+                        user.setUserUuid(UtilityService.generateUuid());
+                        user.setUserPassword(UtilityService
+                                .hashPassword(user.getUserPassword()));
+                        User newUser = databasePlugger.addNewUser(user);
+                        if (newUser != null) {
+                            return "user-createsuccessful";
+                        }
+                    } catch (Exception e) {
+                        log.error(
+                                "********** Error while registering user !! **********"
+                                        + e.getMessage());
+                    }
                 }
+            } else {
+                log.error(
+                        "********** Email address or password empty !! **********");
+                return "error";
             }
-        } else {
-            log.error(
-                    "********** Email address or password empty !! **********");
-            return new ResponseEntity("Email address or password empty !!",
-                    HttpStatus.BAD_REQUEST);
         }
+
         return null;
     }
 
     @Override
-    public ResponseEntity<Boolean> updateUser(
-            @RequestBody User user) throws IOException {
+    public ResponseEntity<Boolean> updateUser(@RequestBody User user)
+            throws IOException {
         if (UtilityService.checkStringNotNull(user.getUserEmailAddress())) {
             if (!UtilityService.checkIfValidEmail(user.getUserEmailAddress())) {
                 log.error(
@@ -97,8 +114,8 @@ public class UserHandlerImpl implements UserHandler {
                         HttpStatus.BAD_REQUEST);
             } else {
                 try {
-                    return new ResponseEntity<Boolean>(
-                            databasePlugger.updateUser(user.getUserUuid(), user),
+                    return new ResponseEntity<Boolean>(databasePlugger
+                            .updateUser(user.getUserUuid(), user),
                             HttpStatus.OK);
                 } catch (Exception e) {
                     log.error(
@@ -115,41 +132,61 @@ public class UserHandlerImpl implements UserHandler {
     }
 
     @Override
-    public ResponseEntity<User> fetchUserDetails(@RequestBody Login login)
+    public String fetchUserDetails(HttpServletRequest request)
             throws IOException {
-        if (UtilityService.checkStringNotNull(login.getUserEmailAddress())
-                && UtilityService.checkStringNotNull(login.getUserPassword())) {
-            if (!UtilityService
-                    .checkIfValidEmail(login.getUserEmailAddress())) {
-                log.error(
-                        "********** Email address not in correct format !! **********");
-                return new ResponseEntity(
-                        "Email address not in correct format !!",
-                        HttpStatus.BAD_REQUEST);
-            } else {
-                try {
-                    User u = databasePlugger.getUserDetails(login);
-                    if (UtilityService.checkPassword(login.getUserPassword(),
-                            u.getUserPassword())) {
-                        return new ResponseEntity<User>(u, HttpStatus.OK);
-                    } else {
-                        return new ResponseEntity(
-                                "***** Password Incorrect *****",
-                                HttpStatus.BAD_REQUEST);
-                    }
-                } catch (Exception e) {
+        if(request != null) {
+            Login login = new Login();
+            login.setUserEmailAddress(request.getParameter("username"));
+            login.setUserPassword(request.getParameter("password"));
+            
+            if (UtilityService.checkStringNotNull(login.getUserEmailAddress())
+                    && UtilityService.checkStringNotNull(login.getUserPassword())) {
+                if (!UtilityService
+                        .checkIfValidEmail(login.getUserEmailAddress())) {
                     log.error(
-                            "********** Error while fetching user details !! **********"
-                                    + e.getMessage());
+                            "********** Email address not in correct format !! **********");
+                    return "error";
+                } else {
+                    try {
+                        User u = databasePlugger.getUserDetails(login);
+                        if (u != null && UtilityService.checkPassword(login.getUserPassword(),
+                                u.getUserPassword())) {
+                            HttpSession session = request.getSession(true);
+                            session.setAttribute("currentuser", u);
+                            return "user-dashboard";
+                        } else {
+                            log.error(
+                            "********** Password Incorrect !! **********");
+                            return "error";
+                        }
+                    } catch (Exception e) {
+                        log.error(
+                                "********** Error while fetching user details !! **********"
+                                        + e.getMessage());
+                    }
                 }
+            } else {
+                log.error(
+                        "********** Email address or password is empty !! **********");
+                return "error";
             }
-        } else {
-            log.error(
-                    "********** Email address or password is empty !! **********");
-            return new ResponseEntity("Email address or password is empty !!",
-                    HttpStatus.BAD_REQUEST);
         }
+        
         return null;
+    }
+    
+    @Override
+    public String logoutUser(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if(session!=null){
+            session.invalidate();
+        }
+        return "user-login";
+    }
+
+    @Override
+    public String goBack(HttpServletRequest request) throws IOException {
+        return "user-dashboard";
     }
 
 }
