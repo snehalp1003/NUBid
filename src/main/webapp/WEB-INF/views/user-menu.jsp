@@ -12,7 +12,7 @@
 
 | 
 <a href="${contextPath}/v1/user/home.htm">Home Page</a>    |    	
-<a href="${contextPath}/v1/user/update.htm">Update my Details</a>    |    
+<a href="${contextPath}/v1/user/update/create.htm">Update my Details</a>    |    
 <a href="${contextPath}/v1/view/myproducts.htm">View my Products</a>    |    
 <a href="${contextPath}/v1/view/products.htm">Purchase Products</a>    |    
 <a href="${contextPath}/v1/user/logout.htm">User Logout</a>    |    

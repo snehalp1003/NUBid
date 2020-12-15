@@ -31,6 +31,7 @@ public class UserDao extends Dao {
             user.setUserDept(u.getUserDept());       
             getSession().save("User", u);
             commit();
+            close();
             return user;
         } catch (Exception e) {
             rollback();
@@ -48,9 +49,11 @@ public class UserDao extends Dao {
             if (null != u) {
                 getSession().update(uuid, user);
                 commit();
+                close();
                 return true;
             } else {
                 rollback();
+                log.error("User does not exist in database so cannot update !");
                 return false;
             }
 
@@ -72,6 +75,7 @@ public class UserDao extends Dao {
 
             if (null != user) {
                 commit();
+                close();
                 return user;
             } else {
                 rollback();

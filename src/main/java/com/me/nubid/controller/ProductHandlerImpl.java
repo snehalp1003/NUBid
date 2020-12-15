@@ -4,6 +4,7 @@
 package com.me.nubid.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +57,7 @@ public class ProductHandlerImpl implements ProductHandler {
             product.setProdDesc(request.getParameter("newdescription"));
             product.setProdMinPrice(
                     Double.parseDouble(request.getParameter("newminbidprice")));
+            product.setProdStartDate(new Date());
 
             if (product != null) {
                 if (!UtilityService.checkIfValidPrice(
@@ -87,64 +89,72 @@ public class ProductHandlerImpl implements ProductHandler {
     }
 
     @Override
-    public ResponseEntity<Boolean> updateProduct(
-            @PathVariable(value = "prodId") String prodId,
-            @RequestBody Product prod) throws IOException {
-        if (UtilityService.checkStringNotNull(prodId) && prod != null) {
-            if (!UtilityService
-                    .checkIfValidPrice(prod.getProdMinPrice().toString())) {
-                log.error(
-                        "********** Product Price not in correct format !! **********");
-                return new ResponseEntity(
-                        "Product Price not in correct format !!",
-                        HttpStatus.BAD_REQUEST);
-            } else if (!UtilityService
-                    .checkStringNotNull(prod.getProdSellerId())) {
-                log.error("********** Product Seller Id is null !! **********");
-                return new ResponseEntity("Product Seller Id is null !!",
-                        HttpStatus.BAD_REQUEST);
-            } else {
+    public String updateProductOnAcceptBidOffer(HttpServletRequest request)
+            throws IOException {
+        if (request != null) {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("currentuser");
+            String prodId = request.getParameter("acceptedProdId");
+            String buyerEmail = request.getParameter("acceptedBidderEmail");
+            Double acceptedOfferPrice = (Double.parseDouble(request.getParameter("acceptedOfferPrice")));
+
+            if (UtilityService.checkStringNotNull(prodId)) {
                 try {
-                    return new ResponseEntity<Boolean>(
-                            databasePlugger.updateProduct(prodId, prod),
-                            HttpStatus.OK);
+                    User buyerDetails = databasePlugger.getUserDetails(buyerEmail);
+                    Product prod = databasePlugger.getProduct(prodId);
+                    if(!UtilityService.checkStringNotNull(prod.getProdBuyerId())) {
+                        prod.setProdBuyerId(buyerDetails.getUserUuid());
+                        prod.setProdFinalPrice((acceptedOfferPrice));
+                        prod.setProdEndDate(new Date());
+                        boolean prodSold = databasePlugger.updateProduct(prodId,
+                                prod);
+                        if (prodSold) {
+                            return "bid-acceptoffersuccess";
+                        } else {
+                            return "error";
+                        }
+                    } else {
+                        return "bid-cannotacceptoffer";
+                    }
                 } catch (Exception e) {
                     log.error(
                             "********** Error while adding product !! **********"
                                     + e.getMessage());
                 }
+            } else {
+                log.error("********** Product Id is empty !! **********");
+                return "error";
             }
-        } else {
-            log.error(
-                    "********** Product Id or Product Details empty !! **********");
-            return new ResponseEntity("Product Id or Product Details empty !!",
-                    HttpStatus.BAD_REQUEST);
+        }
+        log.error("********** Request is empty !! **********");
+        return "error";
+    }
+
+    @Override
+    public String deleteProduct(HttpServletRequest request) throws IOException {
+        if (request != null) {
+            String prodId = request.getParameter("prodId");
+            if (UtilityService.checkStringNotNull(prodId)) {
+                try {
+                    if (databasePlugger.deleteProduct(prodId)) {
+                        return "product-deletesuccessful";
+                    }
+                } catch (Exception e) {
+                    log.error(
+                            "********** Error while deleting product !! **********"
+                                    + e.getMessage());
+                }
+            } else {
+                log.error("********** Product Id is empty !! **********");
+                return "error";
+            }
         }
         return null;
     }
 
     @Override
-    public ResponseEntity<Product> fetchProductDetails(
-            @PathVariable(value = "prodId") String prodId) throws IOException {
-        if (UtilityService.checkStringNotNull(prodId)) {
-            try {
-                return new ResponseEntity<Product>(
-                        databasePlugger.getProduct(prodId), HttpStatus.OK);
-            } catch (Exception e) {
-                log.error(
-                        "********** Error while fetching product details !! **********"
-                                + e.getMessage());
-            }
-        } else {
-            log.error("********** Product Id is empty !! **********");
-            return new ResponseEntity("Product Id is empty !!",
-                    HttpStatus.BAD_REQUEST);
-        }
-        return null;
-    }
-
-    @Override
-    public String viewProductsForPurchase(HttpServletRequest request) throws IOException {
+    public String viewProductsForPurchase(HttpServletRequest request)
+            throws IOException {
         if (request != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
@@ -193,12 +203,6 @@ public class ProductHandlerImpl implements ProductHandler {
             }
         }
 
-        return null;
-    }
-
-    @Override
-    public String deleteProduct(HttpServletRequest request) throws IOException {
-        // TODO Auto-generated method stub
         return null;
     }
 }

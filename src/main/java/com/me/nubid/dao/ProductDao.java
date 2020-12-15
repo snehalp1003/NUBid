@@ -36,6 +36,7 @@ public class ProductDao extends Dao {
             prod.setProdFinalPrice(p.getProdFinalPrice());
             getSession().save(p);
             commit();
+            close();
             return prod;
         } catch (Exception e) {
             rollback();
@@ -52,6 +53,7 @@ public class ProductDao extends Dao {
             if (null != p) {
                 getSession().update(prodId, prod);
                 commit();
+                close();
                 return true;
             } else {
                 rollback();
@@ -63,7 +65,7 @@ public class ProductDao extends Dao {
         }
         return false;
     }
-
+    
     public Product getProduct(String prodId) {
         try {
             Query query;
@@ -74,6 +76,7 @@ public class ProductDao extends Dao {
 
             if (null != prod) {
                 commit();
+                close();
                 return prod;
             } else {
                 rollback();
@@ -86,6 +89,23 @@ public class ProductDao extends Dao {
         return null;
     }
 
+    public Boolean deleteProduct(String prodId) {
+        try {
+            begin();
+            Query query = getSession().createQuery("from Product where prodID=:id");
+            query.setParameter("id", prodId);
+            Product prod = (Product) query.uniqueResult();
+            getSession().delete(prod);
+            commit();
+            close();
+            return true;
+        } catch (Exception e) {
+            rollback();
+            log.error("Error while deleting product");
+        }
+        return false;
+    }
+
     @SuppressWarnings("unchecked")
     public List<Product> viewProductsForPurchase(String currentUserUuid) {
         try {
@@ -96,6 +116,7 @@ public class ProductDao extends Dao {
             query.setParameter("id", currentUserUuid);
             List<Product> prodsForPurchase = query.list();
             commit();
+            close();
             return prodsForPurchase;
         } catch (HibernateException e) {
             rollback();
@@ -114,6 +135,7 @@ public class ProductDao extends Dao {
             query.setParameter("id", currentUserUuid);
             List<Product> prodsPlacedForBidding = query.list();
             commit();
+            close();
             return prodsPlacedForBidding;
         } catch (HibernateException e) {
             rollback();

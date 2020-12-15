@@ -30,10 +30,12 @@ public interface UserHandler {
     @RequestMapping(value = "/v1/user/register.htm", method = RequestMethod.POST)
     public String addNewUser(HttpServletRequest request) throws IOException;
 
-    //Pending
-    @RequestMapping(value = "/v1/user/update.htm", method = RequestMethod.PUT)
-    public ResponseEntity<Boolean> updateUser(@RequestBody User user)
+    @RequestMapping(value = "/v1/user/update/create.htm", method = RequestMethod.GET)
+    public String getUserUpdateForm(HttpServletRequest request)
             throws IOException;
+
+    @RequestMapping(value = "/v1/user/update.htm", method = RequestMethod.POST)
+    public String updateUser(HttpServletRequest request) throws IOException;
 
     @RequestMapping(value = "/v1/user/home.htm", method = RequestMethod.POST)
     public String fetchUserDetails(HttpServletRequest request)
@@ -41,7 +43,7 @@ public interface UserHandler {
 
     @RequestMapping(value = "/v1/user/logout.htm", method = RequestMethod.GET)
     public String logoutUser(HttpServletRequest request) throws IOException;
-    
+
     @RequestMapping(value = "/v1/user/home.htm", method = RequestMethod.GET)
     public String goBack(HttpServletRequest request) throws IOException;
 }

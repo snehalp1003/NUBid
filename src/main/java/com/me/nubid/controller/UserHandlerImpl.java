@@ -94,39 +94,56 @@ public class UserHandlerImpl implements UserHandler {
 
         return null;
     }
+    
+    @Override
+    public String getUserUpdateForm(HttpServletRequest request)
+            throws IOException {
+        return "user-update";
+    }
 
     @Override
-    public ResponseEntity<Boolean> updateUser(@RequestBody User user)
+    public String updateUser(HttpServletRequest request)
             throws IOException {
-        if (UtilityService.checkStringNotNull(user.getUserEmailAddress())) {
-            if (!UtilityService.checkIfValidEmail(user.getUserEmailAddress())) {
-                log.error(
-                        "********** Email address not in correct format !! **********");
-                return new ResponseEntity(
-                        "Email address not in correct format !!",
-                        HttpStatus.BAD_REQUEST);
-            } else if (!UtilityService
-                    .checkIfValidPhoneNum(user.getUserPhoneNum())) {
-                log.error(
-                        "********** Phone number not in correct format !! **********");
-                return new ResponseEntity(
-                        "Phone number not in correct format !!",
-                        HttpStatus.BAD_REQUEST);
-            } else {
-                try {
-                    return new ResponseEntity<Boolean>(databasePlugger
-                            .updateUser(user.getUserUuid(), user),
-                            HttpStatus.OK);
-                } catch (Exception e) {
+        if(request!=null) {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("currentuser");
+            user.setUserFirstName(request.getParameter("updatefname"));
+            user.setUserLastName(request.getParameter("updatelname"));
+            user.setUserPhoneNum(request.getParameter("updatephonenum"));
+            user.setUserAddress(request.getParameter("updateaddress"));
+            user.setUserCollege(request.getParameter("updatecollege"));
+            user.setUserDept(request.getParameter("updatedept"));
+            
+            if (UtilityService.checkStringNotNull(user.getUserEmailAddress())) {
+                if (!UtilityService.checkIfValidEmail(user.getUserEmailAddress())) {
                     log.error(
-                            "********** Error while updating user details !! **********"
-                                    + e.getMessage());
+                            "********** Email address not in correct format !! **********");
+                    return "error";
+                } else if (!UtilityService
+                        .checkIfValidPhoneNum(user.getUserPhoneNum())) {
+                    log.error(
+                            "********** Phone number not in correct format !! **********");
+                    return "error";
+                } else {
+                    try {
+                        Boolean b = databasePlugger
+                                .updateUser(user.getUserUuid(), user);
+                        if(b) {
+                            session.setAttribute("currentuser", user);
+                            return "user-updatesuccessful";
+                        } else {
+                            return "error";
+                        }
+                    } catch (Exception e) {
+                        log.error(
+                                "********** Error while updating user details !! **********"
+                                        + e.getMessage());
+                    }
                 }
+            } else {
+                log.error("********** Email address is empty !! **********");
+                return "error";
             }
-        } else {
-            log.error("********** Email address is empty !! **********");
-            return new ResponseEntity("Email address is empty !!",
-                    HttpStatus.BAD_REQUEST);
         }
         return null;
     }
@@ -188,5 +205,4 @@ public class UserHandlerImpl implements UserHandler {
     public String goBack(HttpServletRequest request) throws IOException {
         return "user-dashboard";
     }
-
 }

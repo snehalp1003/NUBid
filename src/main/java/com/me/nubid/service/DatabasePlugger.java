@@ -90,6 +90,24 @@ public class DatabasePlugger {
         }
         return null;
     }
+    
+    public User getUserDetails(String email) {
+        if(UtilityService.checkStringNotNull(email)) {
+            try {
+                User user = userDao.getUser(email);
+                log.info(
+                        "*****************************************FETCHED USER DETAILS !!******************************************");
+                return user;
+            } catch (Exception e) {
+                log.error(
+                        "*****************************************ERROR OCCURED WHEN FETCHING USER DETAILS !!******************************************");
+                log.error("Exception occurred when Fetching User Details: "
+                        + e.getMessage() + " for userEmail : "
+                        + email);
+            }
+        }
+        return null;
+    }
 
     public Product addNewProduct(Product prod) {
         if (prod != null) {
@@ -147,6 +165,25 @@ public class DatabasePlugger {
         return null;
     }
 
+    public Boolean deleteProduct(String prodId) {
+        if (UtilityService.checkStringNotNull(prodId)) {
+            try {
+                if (prodDao.deleteProduct(prodId)
+                        && bidDao.deleteBidsOnDeleteProduct(prodId)) {
+                    log.info(
+                            "*****************************************DELETED PRODUCT SUCCESSFULLY !!******************************************");
+                    return true;
+                }
+            } catch (Exception e) {
+                log.error(
+                        "*****************************************ERROR OCCURED WHEN FETCHING PRODUCT DETAILS !!******************************************");
+                log.error("Exception occurred when Fetching Product Details: "
+                        + e.getMessage() + " for prodId : " + prodId);
+            }
+        }
+        return false;
+    }
+
     public List<Product> viewProductsForPurchase(String currentUserUuid) {
         if (UtilityService.checkStringNotNull(currentUserUuid)) {
             try {
@@ -163,11 +200,12 @@ public class DatabasePlugger {
         }
         return null;
     }
-    
+
     public List<Product> viewProductsForSelling(String currentUserUuid) {
-        if(UtilityService.checkStringNotNull(currentUserUuid)) {
+        if (UtilityService.checkStringNotNull(currentUserUuid)) {
             try {
-                List<Product> prodsPlacedForBidding = prodDao.viewProductsForSelling(currentUserUuid);
+                List<Product> prodsPlacedForBidding = prodDao
+                        .viewProductsForSelling(currentUserUuid);
                 log.info(
                         "*****************************************FETCHED MY PRODUCTS FOR BIDDING !!******************************************");
                 return prodsPlacedForBidding;
@@ -180,13 +218,44 @@ public class DatabasePlugger {
         return null;
     }
 
-    public Bid placeBid(Bid bid) {
+    public String bidPresent(String currentUserUuid, String prodId) {
+        if (UtilityService.checkStringNotNull(currentUserUuid)
+                && UtilityService.checkStringNotNull(prodId)) {
+            try {
+                String bidId = bidDao.bidPresent(currentUserUuid, prodId);
+                if(UtilityService.checkStringNotNull(bidId)) {
+                    log.info(
+                            "***************************************** OLD BID FOUND !!******************************************");
+                    return bidId;
+                } else {
+                    log.info(
+                            "***************************************** NO BID FOUND !!******************************************");
+                    return bidId;
+                } 
+            } catch(Exception e) {
+                log.error(
+                        "*****************************************ERROR OCCURED WHEN SEARCHING FOR OLD BID !!******************************************");
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public Bid placeBid(Bid bid, Boolean updateBid) {
         if (bid != null) {
             try {
-                Bid b = bidDao.placeBid(bid);
-                log.info(
-                        "*****************************************BID PLACED !!******************************************");
-                return b;
+                if (updateBid) {
+                    Bid b = bidDao.updateBid(bid.getBidId(), bid);
+                    log.info(
+                            "*****************************************UPDATED BID OFFER !!******************************************");
+                    return b;
+                } else {
+                    Bid b = bidDao.placeBid(bid);
+                    log.info(
+                            "*****************************************BID PLACED !!******************************************");
+                    return b;
+                }
+
             } catch (Exception e) {
                 log.error(
                         "*****************************************ERROR OCCURED WHEN PLACING BID !!******************************************");

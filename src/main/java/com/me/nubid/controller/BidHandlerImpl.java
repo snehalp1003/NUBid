@@ -39,18 +39,18 @@ public class BidHandlerImpl implements BidHandler {
     DatabasePlugger databasePlugger;
 
     @Override
-    public String placeBid(HttpServletRequest request)
-            throws IOException {
-        if(request!=null) {
+    public String placeBid(HttpServletRequest request) throws IOException {
+        if (request != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
             Bid bid = new Bid();
             bid.setBidderId(uuid);
             bid.setBidProdId(request.getParameter("prodId"));
-            bid.setBidPrice(Double.parseDouble(request.getParameter("newBidPrice")));
+            bid.setBidPrice(
+                    Double.parseDouble(request.getParameter("newBidPrice")));
             bid.setBidDate(new Date());
-            
+
             if (bid != null) {
                 if (!UtilityService
                         .checkIfValidPrice(bid.getBidPrice().toString())) {
@@ -59,17 +59,32 @@ public class BidHandlerImpl implements BidHandler {
                     return "error";
                 } else {
                     try {
-                        bid.setBidId(UtilityService.generateUuid());
-                        Bid b = databasePlugger.placeBid(bid);
-                        return "bid-offersuccessful";
+                        Product prod = databasePlugger
+                                .getProduct(request.getParameter("prodId"));
+                        if(!UtilityService.checkStringNotNull(prod.getProdBuyerId())) {
+                            String bidId = databasePlugger.bidPresent(
+                                    bid.getBidderId(), bid.getBidProdId());
+                            if (UtilityService.checkStringNotNull(bidId)) {
+                                bid.setBidId(bidId);
+                                Bid b = databasePlugger.placeBid(bid, true);
+                            } else {
+                                bid.setBidId(UtilityService.generateUuid());
+                                Bid b = databasePlugger.placeBid(bid, false);
+                            }
+                            return "bid-offersuccessful";
+                        } else {
+                            return "bid-cannotacceptoffer";
+                        }
+                    
                     } catch (Exception e) {
-                        log.error("********** Error while placing bid !! **********"
-                                + e.getMessage());
+                        log.error(
+                                "********** Error while placing bid !! **********"
+                                        + e.getMessage());
                     }
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -89,11 +104,17 @@ public class BidHandlerImpl implements BidHandler {
                     Product product = databasePlugger.getProduct(prodId);
                     Map<String, Double> viewBidsForProduct = databasePlugger
                             .getAllBids(prodId);
-                    if (product!=null && viewBidsForProduct != null
+                    if (product != null && viewBidsForProduct != null
                             && viewBidsForProduct.size() > 0) {
+                        session.setAttribute("prodId", prodId);
                         session.setAttribute("prodName", product.getProdName());
                         session.setAttribute("bidsPlaced", viewBidsForProduct);
-                        return "bids-dashboard";
+                        if (product.getProdSellerId()
+                                .equals(user.getUserUuid())) {
+                            return "bids-sellerdashboard";
+                        } else {
+                            return "bids-buyerdashboard";
+                        }
                     }
                 } catch (Exception e) {
                     log.error(
@@ -107,5 +128,4 @@ public class BidHandlerImpl implements BidHandler {
         }
         return null;
     }
-
 }

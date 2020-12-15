@@ -34,15 +34,15 @@ public interface ProductHandler {
     public String addNewProduct(HttpServletRequest request) throws IOException;
     
     //Pending
-    @RequestMapping(value = "/v1/update/product/{prodId}", method = RequestMethod.PUT)
-    public ResponseEntity<Boolean> updateProduct(
-            @PathVariable(value = "prodId") String prodId,
-            @RequestBody Product prod) throws IOException;
+//    @RequestMapping(value = "/v1/update/product/{prodId}", method = RequestMethod.POST)
+//    public ResponseEntity<Boolean> updateProduct(
+//            @PathVariable(value = "prodId") String prodId,
+//            @RequestBody Product prod) throws IOException;
     
-    //Pending
-    @RequestMapping(value = "/v1/get/product/{prodId}", method = RequestMethod.GET)
-    public ResponseEntity<Product> fetchProductDetails(
-            @PathVariable(value = "prodId") String prodId) throws IOException;
+//    //Pending
+//    @RequestMapping(value = "/v1/get/product/{prodId}", method = RequestMethod.GET)
+//    public ResponseEntity<Product> fetchProductDetails(
+//            @PathVariable(value = "prodId") String prodId) throws IOException;
     
     @RequestMapping(value = "/v1/view/products.htm", method = RequestMethod.GET)
     public String viewProductsForPurchase(HttpServletRequest request)
@@ -52,8 +52,11 @@ public interface ProductHandler {
     public String viewProductsForSelling(HttpServletRequest request)
             throws IOException;
     
-    //Pending
-    @RequestMapping(value = "/v1/product/delete.htm", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/v1/product/delete.htm", method = RequestMethod.GET)
     public String deleteProduct(HttpServletRequest request)
+            throws IOException;
+    
+    @RequestMapping(value = "/v1/bid/accept.htm", method = RequestMethod.POST)
+    public String updateProductOnAcceptBidOffer(HttpServletRequest request)
             throws IOException;
 }

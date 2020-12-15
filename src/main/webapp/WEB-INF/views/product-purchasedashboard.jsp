@@ -28,7 +28,7 @@
 			<td><a href="${contextPath}/v1/bids/view.htm?prodId=${product.prodId}">View Bids</a></td>
 			<td>
 				<form action="${contextPath}/v1/bid/offer.htm" method="POST">
-					<input type="text" name="newBidPrice" pattern="[0-9]+(\\.[0-9][0-9]?)?{10}" />
+					<input type="text" name="newBidPrice" pattern="[0-9]+(\\.[0-9][0-9]?)?{5}" required/>
 					<input type="hidden" name="prodId" value="${product.prodId}"/>
 					<input type=submit value="Place Bid">
 				</form>
@@ -38,8 +38,7 @@
 	</table>
 	<br><br>
 	
-<br><br>
-<a href="${contextPath}/v1/product/create.htm">Sell a new Product</a>    
+<br><br>  
 <%@ include file="user-menu.jsp" %>
 </body>
 </html>

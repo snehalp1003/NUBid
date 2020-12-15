@@ -14,7 +14,7 @@
 	
 	<table border="1">		
 		<tr>
-			<th>Bidder username</th>
+			<th>Bidder Username</th>
 			<th>Bid Price</th>
 			<th>Accept Offer</th>
 		</tr>
@@ -22,7 +22,14 @@
 		<tr>
 			<td>${bid.key}</td>
 			<td>${bid.value}</td>
-			<td><input value="${bid.key}" name="selectedbid" type="radio" /></td>
+			<td>
+			<form action="${contextPath}/v1/bid/accept.htm" method="POST">
+					<input type="hidden" name="acceptedBidderEmail" value="${bid.key}"/>
+					<input type="hidden" name="acceptedOfferPrice" value="${bid.value}"/>
+					<input type="hidden" name="acceptedProdId" value="${sessionScope.prodId}"/>
+					<input type=submit value="Accept Bid Offer">
+			</form>
+			</td>
 		</tr>
 		</c:forEach>
 	</table>
