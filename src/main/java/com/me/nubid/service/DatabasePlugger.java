@@ -90,9 +90,9 @@ public class DatabasePlugger {
         }
         return null;
     }
-    
+
     public User getUserDetails(String email) {
-        if(UtilityService.checkStringNotNull(email)) {
+        if (UtilityService.checkStringNotNull(email)) {
             try {
                 User user = userDao.getUser(email);
                 log.info(
@@ -102,8 +102,7 @@ public class DatabasePlugger {
                 log.error(
                         "*****************************************ERROR OCCURED WHEN FETCHING USER DETAILS !!******************************************");
                 log.error("Exception occurred when Fetching User Details: "
-                        + e.getMessage() + " for userEmail : "
-                        + email);
+                        + e.getMessage() + " for userEmail : " + email);
             }
         }
         return null;
@@ -218,12 +217,30 @@ public class DatabasePlugger {
         return null;
     }
 
+    public List<Product> searchProducts(String key, String uuid) {
+        if (UtilityService.checkStringNotNull(key)
+                && UtilityService.checkStringNotNull(uuid)) {
+            try {
+                List<Product> searchProductList = prodDao.searchProducts(key,
+                        uuid);
+                log.info(
+                        "*****************************************FETCHED PRODUCTS MATCHING SEARCH CRITERIA !!******************************************");
+                return searchProductList;
+            } catch (Exception e) {
+                log.error(
+                        "*****************************************ERROR OCCURED WHEN FETCHING PRODUCTS MATCHING SEARCH CRITERIA !!******************************************");
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     public String bidPresent(String currentUserUuid, String prodId) {
         if (UtilityService.checkStringNotNull(currentUserUuid)
                 && UtilityService.checkStringNotNull(prodId)) {
             try {
                 String bidId = bidDao.bidPresent(currentUserUuid, prodId);
-                if(UtilityService.checkStringNotNull(bidId)) {
+                if (UtilityService.checkStringNotNull(bidId)) {
                     log.info(
                             "***************************************** OLD BID FOUND !!******************************************");
                     return bidId;
@@ -231,8 +248,8 @@ public class DatabasePlugger {
                     log.info(
                             "***************************************** NO BID FOUND !!******************************************");
                     return bidId;
-                } 
-            } catch(Exception e) {
+                }
+            } catch (Exception e) {
                 log.error(
                         "*****************************************ERROR OCCURED WHEN SEARCHING FOR OLD BID !!******************************************");
                 e.printStackTrace();

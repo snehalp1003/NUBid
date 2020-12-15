@@ -13,10 +13,17 @@
 	<h1> User Dashboard</h1>
 	<h2> Welcome, ${sessionScope.currentuser.userFirstName} ! </h2>
 	
-	<p>Search for Music:</p>
-	<form action="${contextPath}/user/search.htm" method="post">
+	<p>Search for Products:</p>
+	<form action="${contextPath}/v1/product/search.htm" method="post">
 	
-		<input type="text" name="keyword"  placeholder="Search Song Here" required/>
+		<select name="category" required="required">
+			    	<option value="electronic">Electronics</option>
+			    	<option value="furniture">Furniture</option>
+			    	<option value="books">Books</option>
+			    	<option value="clothing">Clothing</option>
+			    	<option value="homedecor">Home Decor</option>
+			    	<option value="other">Other</option>	
+		</select>
 		
 		<br> <br>
 		<input type="submit" name="submit" value="Search" />

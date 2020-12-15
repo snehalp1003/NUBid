@@ -85,7 +85,8 @@ public class ProductHandlerImpl implements ProductHandler {
                 }
             }
         }
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
 
     @Override
@@ -149,7 +150,8 @@ public class ProductHandlerImpl implements ProductHandler {
                 return "error";
             }
         }
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
 
     @Override
@@ -175,7 +177,8 @@ public class ProductHandlerImpl implements ProductHandler {
                 return "error";
             }
         }
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
 
     @Override
@@ -203,6 +206,35 @@ public class ProductHandlerImpl implements ProductHandler {
             }
         }
 
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
+
+    @Override
+    public String searchProducts(HttpServletRequest request)
+            throws IOException {
+        if(request != null) {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("currentuser");
+            String key = request.getParameter("category");
+            if(UtilityService.checkStringNotNull(key)) {
+                try {
+                    List<Product> searchProductList = databasePlugger.searchProducts(key, user.getUserUuid());
+                    session.setAttribute("productsForPurchase", searchProductList);
+                    return "product-purchasedashboard";
+                } catch (Exception e) {
+                    log.error(
+                            "********** Error while fetching products matching search criteria !! **********"
+                                    + e.getMessage());
+                }
+            } else {
+                log.error("********** Search critieria is empty !! **********");
+                return "error";
+            }
+        }
+        log.error("********** Request is empty !! **********");
+        return "error";
+    }
+    
+    
 }

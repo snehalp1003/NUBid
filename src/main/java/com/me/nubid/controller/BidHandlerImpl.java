@@ -61,7 +61,11 @@ public class BidHandlerImpl implements BidHandler {
                     try {
                         Product prod = databasePlugger
                                 .getProduct(request.getParameter("prodId"));
-                        if(!UtilityService.checkStringNotNull(prod.getProdBuyerId())) {
+                        if(bid.getBidPrice().compareTo(prod.getProdMinPrice()) < 0) {
+                            log.error(
+                                    "********** Bid Price cannot be less than the minimum bid price !! **********");
+                            return "error";
+                        } else if(!UtilityService.checkStringNotNull(prod.getProdBuyerId())) {
                             String bidId = databasePlugger.bidPresent(
                                     bid.getBidderId(), bid.getBidProdId());
                             if (UtilityService.checkStringNotNull(bidId)) {
@@ -85,7 +89,8 @@ public class BidHandlerImpl implements BidHandler {
             }
         }
 
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
 
     @Override
@@ -104,8 +109,7 @@ public class BidHandlerImpl implements BidHandler {
                     Product product = databasePlugger.getProduct(prodId);
                     Map<String, Double> viewBidsForProduct = databasePlugger
                             .getAllBids(prodId);
-                    if (product != null && viewBidsForProduct != null
-                            && viewBidsForProduct.size() > 0) {
+                    if (product != null) {
                         session.setAttribute("prodId", prodId);
                         session.setAttribute("prodName", product.getProdName());
                         session.setAttribute("bidsPlaced", viewBidsForProduct);
@@ -118,7 +122,7 @@ public class BidHandlerImpl implements BidHandler {
                     }
                 } catch (Exception e) {
                     log.error(
-                            "********** Error while fetching bids for Prodduct Id !! **********"
+                            "********** Error while fetching bids for Product Id !! **********"
                                     + prodId);
                 }
             } else {
@@ -126,6 +130,7 @@ public class BidHandlerImpl implements BidHandler {
                 return "error";
             }
         }
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
 }

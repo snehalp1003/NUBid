@@ -65,7 +65,7 @@ public class ProductDao extends Dao {
         }
         return false;
     }
-    
+
     public Product getProduct(String prodId) {
         try {
             Query query;
@@ -92,7 +92,8 @@ public class ProductDao extends Dao {
     public Boolean deleteProduct(String prodId) {
         try {
             begin();
-            Query query = getSession().createQuery("from Product where prodID=:id");
+            Query query = getSession()
+                    .createQuery("from Product where prodID=:id");
             query.setParameter("id", prodId);
             Product prod = (Product) query.uniqueResult();
             getSession().delete(prod);
@@ -140,6 +141,27 @@ public class ProductDao extends Dao {
         } catch (HibernateException e) {
             rollback();
             System.out.println("Could not list Products");
+        }
+        return new ArrayList<Product>();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Product> searchProducts(String key, String uuid) {
+        try {
+            Query query;
+            begin();
+            query = getSession()
+                    .createQuery("from Product where prodCategory=:key AND prodSellerId!=:id");
+            query.setParameter("key", key);
+            query.setParameter("id", uuid);
+            List<Product> searchProducts = query.getResultList();
+            commit();
+            close();
+            return searchProducts;
+        } catch (HibernateException e) {
+            rollback();
+            System.out
+                    .println("Could not list products as per search criteria");
         }
         return new ArrayList<Product>();
     }

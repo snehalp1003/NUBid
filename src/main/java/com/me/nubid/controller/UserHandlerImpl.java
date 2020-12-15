@@ -92,7 +92,8 @@ public class UserHandlerImpl implements UserHandler {
             }
         }
 
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
     
     @Override
@@ -145,7 +146,8 @@ public class UserHandlerImpl implements UserHandler {
                 return "error";
             }
         }
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
 
     @Override
@@ -189,7 +191,8 @@ public class UserHandlerImpl implements UserHandler {
             }
         }
         
-        return null;
+        log.error("********** Request is empty !! **********");
+        return "error";
     }
     
     @Override

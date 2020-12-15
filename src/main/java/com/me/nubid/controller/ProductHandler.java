@@ -25,38 +25,29 @@ import com.me.nubid.model.Product;
 
 @Controller
 public interface ProductHandler {
-    
+
     @RequestMapping(value = "/v1/product/create.htm", method = RequestMethod.GET)
     public String getProductCreateForm(HttpServletRequest request)
             throws IOException;
-    
+
     @RequestMapping(value = "/v1/product/add.htm", method = RequestMethod.POST)
     public String addNewProduct(HttpServletRequest request) throws IOException;
-    
-    //Pending
-//    @RequestMapping(value = "/v1/update/product/{prodId}", method = RequestMethod.POST)
-//    public ResponseEntity<Boolean> updateProduct(
-//            @PathVariable(value = "prodId") String prodId,
-//            @RequestBody Product prod) throws IOException;
-    
-//    //Pending
-//    @RequestMapping(value = "/v1/get/product/{prodId}", method = RequestMethod.GET)
-//    public ResponseEntity<Product> fetchProductDetails(
-//            @PathVariable(value = "prodId") String prodId) throws IOException;
-    
+
     @RequestMapping(value = "/v1/view/products.htm", method = RequestMethod.GET)
     public String viewProductsForPurchase(HttpServletRequest request)
             throws IOException;
-    
+
     @RequestMapping(value = "/v1/view/myproducts.htm", method = RequestMethod.GET)
     public String viewProductsForSelling(HttpServletRequest request)
             throws IOException;
-    
+
     @RequestMapping(value = "/v1/product/delete.htm", method = RequestMethod.GET)
-    public String deleteProduct(HttpServletRequest request)
-            throws IOException;
-    
+    public String deleteProduct(HttpServletRequest request) throws IOException;
+
     @RequestMapping(value = "/v1/bid/accept.htm", method = RequestMethod.POST)
     public String updateProductOnAcceptBidOffer(HttpServletRequest request)
             throws IOException;
+
+    @RequestMapping(value = "/v1/product/search.htm", method = RequestMethod.POST)
+    public String searchProducts(HttpServletRequest request) throws IOException;
 }
