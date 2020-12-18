@@ -184,7 +184,7 @@ public class BidHandlerImpl implements BidHandler {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
             String uRole = UtilityService.getCurrentUserRole(request);
-            if (uRole.equals("admin")) {
+            if (uRole.equals("user")) {
                 log.error("********** Unauthorized user ! **********");
                 return "error";
             }

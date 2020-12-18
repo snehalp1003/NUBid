@@ -34,6 +34,7 @@ public class ProductDao extends Dao {
             prod.setProdEndDate(p.getProdEndDate());
             prod.setProdBuyerId(p.getProdBuyerId());
             prod.setProdFinalPrice(p.getProdFinalPrice());
+            prod.setProdImgPath(p.getProdImgPath());
             getSession().save(p);
             commit();
             close();

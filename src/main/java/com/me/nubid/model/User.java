@@ -20,7 +20,11 @@ public class User {
     
     @Id
     private String userUuid;
+    
+    @Column(nullable=false)
     private String userFirstName;
+    
+    @Column(nullable=false)
     private String userLastName;
     
     @Column(nullable=false, unique = true)
@@ -30,6 +34,8 @@ public class User {
     private String userPassword;
     
     private String userAddress;
+    
+    @Column(nullable=false)
     private String userPhoneNum;
     private String userCollege;
     private String userDept;

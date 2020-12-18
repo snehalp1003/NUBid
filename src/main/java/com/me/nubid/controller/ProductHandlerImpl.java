@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.me.nubid.model.Product;
+import com.me.nubid.model.ProductImage;
 import com.me.nubid.model.User;
 import com.me.nubid.service.DatabasePlugger;
 import com.me.nubid.service.UtilityService;
@@ -70,6 +71,7 @@ public class ProductHandlerImpl implements ProductHandler {
             product.setProdMinPrice(
                     Double.parseDouble(request.getParameter("newminbidprice")));
             product.setProdStartDate(new Date());
+            product.setProdImgPath(request.getParameter("newimgfile"));
 
             if (product != null) {
                 if (!UtilityService.checkIfValidPrice(
@@ -87,6 +89,12 @@ public class ProductHandlerImpl implements ProductHandler {
                         product.setProdId(UtilityService.generateUuid());
                         Product p = databasePlugger.addNewProduct(product);
                         if (p != null) {
+                            if(UtilityService.checkStringNotNull(p.getProdImgPath())) {
+                                ProductImage img = addProductImage(p.getProdId(), p.getProdImgPath());
+                                if(img!=null && UtilityService.checkStringNotNull(img.getImageId())) {
+                                    return "product-createsuccessful";
+                                }
+                            }
                             return "product-createsuccessful";
                         }
                     } catch (Exception e) {
@@ -100,6 +108,39 @@ public class ProductHandlerImpl implements ProductHandler {
         log.error(
                 "********** Request is empty or Session is invalid !! **********");
         return "error";
+    }
+
+    /**
+     * @param prodImgPath
+     * @return
+     */
+    private ProductImage addProductImage(String prodId, String prodImgPath) {
+        if(!UtilityService.checkStringNotNull(prodId)) {
+            log.error(
+                    "********** Product Id is empty !! **********");
+            return null;
+        } else if(!UtilityService.checkStringNotNull(prodImgPath)) {
+            log.error(
+                    "********** Image Path is empty !! **********");
+            return null;
+        } else {
+            try {
+                ProductImage prodImg = new ProductImage();
+                prodImg.setImageId(UtilityService.generateUuid());
+                prodImg.setProdId(prodId);
+                prodImg.setImgLocation(prodImgPath);
+                ProductImage img = databasePlugger.addProductImage(prodImg);
+                if(img!=null) {
+                    return img;
+                }
+            } catch (Exception e) {
+                log.error(
+                        "********** Error while uploading image for  product !! **********"
+                                + e.getMessage());
+            }
+        }
+        
+        return null;
     }
 
     @Override
@@ -261,7 +302,7 @@ public class ProductHandlerImpl implements ProductHandler {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
             String uRole = UtilityService.getCurrentUserRole(request);
-            if (uRole.equals("user")) {
+            if (uRole.equals("admin")) {
                 log.error("********** Unauthorized user ! **********");
                 return "error";
             }

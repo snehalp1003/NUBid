@@ -2,6 +2,7 @@ package com.me.nubid.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,15 +19,22 @@ public class Product {
     
     @Id
     private String prodId;
+    
+    @Column(nullable=false)
     private String prodName;
+    
+    @Column(nullable=false)
     private String prodCategory;
     private String prodDesc;
     private String prodSellerId;
+    
+    @Column(nullable=false)
     private Double prodMinPrice;
     private Date prodStartDate;
     private Date prodEndDate;
     private String prodBuyerId;
     private Double prodFinalPrice;
+    private String prodImgPath;
     
     public String getProdId() {
         return prodId;
@@ -87,5 +95,11 @@ public class Product {
     }
     public void setProdFinalPrice(Double prodFinalPrice) {
         this.prodFinalPrice = prodFinalPrice;
+    }
+    public String getProdImgPath() {
+        return prodImgPath;
+    }
+    public void setProdImgPath(String prodImgPath) {
+        this.prodImgPath = prodImgPath;
     }
 }

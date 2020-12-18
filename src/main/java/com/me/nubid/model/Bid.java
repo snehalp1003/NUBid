@@ -2,6 +2,7 @@ package com.me.nubid.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -18,6 +19,8 @@ public class Bid {
     private String bidId;
     private String bidderId;
     private String bidProdId;
+    
+    @Column(nullable=false)
     private Double bidPrice;
     private Date bidDate;
     

@@ -25,7 +25,8 @@ import com.me.nubid.model.User;
 public class UtilityService {
 
 //    static final String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-    static final String emailRegex = "^[a-zA-Z0-9_]+(@northeastern\\.edu)$";
+//    static final String emailRegex = "^[a-zA-Z0-9._]+(@northeastern\\.edu)$";
+    static final String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*(@northeastern\\.edu)$";
 //    static final String passwordRegex = "((?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%!]).{8,40})";
     static final String passwordRegex = "((?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[*@#$%!()&]).{8,40})";
     static final String phoneNumRegex = "^\\d{10}$";
@@ -48,7 +49,7 @@ public class UtilityService {
         output = matcher.matches();
         boolean emailLength = false;
         String[] passBreak = email.split("@", 2);
-        if (passBreak[0].length() > 2 && passBreak[0].length() < 9) {
+        if (passBreak[0].length() > 2 && passBreak[0].length() < 30) {
             emailLength = true;
         }
 
@@ -111,7 +112,7 @@ public class UtilityService {
         email.setFrom("snailpatel2@gmail.com");
         email.setSubject("Congratulations ! Bid Won !");
         email.setMsg("The item has been sold to you at your bid price !");
-        email.addTo("snehalp1003@gmail.com");
+        email.addTo(buyerEmail);
         email.send();
     }
     

@@ -1,8 +1,7 @@
 package com.me.nubid.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -15,9 +14,13 @@ import javax.persistence.Table;
 public class ProductImage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String imageId;
+    
+    @Column(nullable=false)
     private String prodId;
+    
+    @Column(nullable=false)
+    private String imgLocation;
     
     public String getImageId() {
         return imageId;
@@ -30,5 +33,11 @@ public class ProductImage {
     }
     public void setProdId(String prodId) {
         this.prodId = prodId;
+    }
+    public String getImgLocation() {
+        return imgLocation;
+    }
+    public void setImgLocation(String imgLocation) {
+        this.imgLocation = imgLocation;
     }
 }

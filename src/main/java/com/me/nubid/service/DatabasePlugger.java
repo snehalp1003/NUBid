@@ -14,12 +14,14 @@ import org.springframework.stereotype.Service;
 
 import com.me.nubid.dao.BidDao;
 import com.me.nubid.dao.ProductDao;
+import com.me.nubid.dao.ProductImageDao;
 import com.me.nubid.dao.UserDao;
 import com.me.nubid.model.AdminBidView;
 import com.me.nubid.model.AdminUserView;
 import com.me.nubid.model.Bid;
 import com.me.nubid.model.Login;
 import com.me.nubid.model.Product;
+import com.me.nubid.model.ProductImage;
 import com.me.nubid.model.User;
 
 /**
@@ -34,6 +36,7 @@ public class DatabasePlugger {
     UserDao userDao = new UserDao();
     ProductDao prodDao = new ProductDao();
     BidDao bidDao = new BidDao();
+    ProductImageDao imgDao = new ProductImageDao();
 
     public User addNewUser(User user) {
         if (user != null) {
@@ -366,5 +369,39 @@ public class DatabasePlugger {
                     + e.getMessage());
         }
         return searchForBids;
+    }
+    
+    public ProductImage addProductImage(ProductImage prodImg) {
+        if (prodImg != null) {
+            try {
+                ProductImage img = imgDao.addProductImage(prodImg);
+                log.info(
+                        "*****************************************UPLOADED IMAGE FOR PRODUCT !!******************************************");
+                return img;
+            } catch (Exception e) {
+                log.error(
+                        "*****************************************ERROR OCCURED UPLOADING IMAGE FOR PRODUCT !!******************************************");
+                log.error("Exception occurred while uploading image for Product : "
+                        + e.getMessage() + " for imgId : " + prodImg.getImageId());
+            }
+        }
+        return null;
+    }
+    
+    public ProductImage getProductImage(String prodId) {
+        if (prodId != null) {
+            try {
+                ProductImage img = imgDao.getProductImage(prodId);
+                log.info(
+                        "*****************************************FETCHED IMAGE FOR PRODUCT !!******************************************");
+                return img;
+            } catch (Exception e) {
+                log.error(
+                        "*****************************************ERROR OCCURED WHILE FETCHING IMAGE FOR PRODUCT !!******************************************");
+                log.error("Exception occurred while uploading image for Product : "
+                        + e.getMessage() + " for prodId : " + prodId);
+            }
+        }
+        return null;
     }
 }
