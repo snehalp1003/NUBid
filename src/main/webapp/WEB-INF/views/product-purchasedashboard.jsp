@@ -28,7 +28,7 @@
 			<td><a href="${contextPath}/v1/bids/view.htm?prodId=${product.prodId}">View Bids</a></td>
 			<td>
 				<form action="${contextPath}/v1/bid/offer.htm" method="POST">
-					<input type="text" name="newBidPrice" pattern="[0-9]+(\\.[0-9][0-9]?)?{5}" required/>
+					<input type="number" name="newBidPrice" min="1" step="0.01" size="30" required="required"/>
 					<input type="hidden" name="prodId" value="${product.prodId}"/>
 					<input type=submit value="Place Bid">
 				</form>

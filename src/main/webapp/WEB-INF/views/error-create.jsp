@@ -10,7 +10,7 @@
 
 <body>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
-	<h1> User not found! Please re-check credentials !</h1>
+	<h1>Please check all the values and try creating user again ! </h1>
 	
 	<a href="${contextPath}">Back to Login Page</a>	
 </body>

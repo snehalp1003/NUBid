@@ -112,6 +112,7 @@ public class ProductHandlerImpl implements ProductHandler {
                         boolean prodSold = databasePlugger.updateProduct(prodId,
                                 prod);
                         if (prodSold) {
+                            UtilityService.SendEmail(buyerEmail);
                             return "bid-acceptoffersuccess";
                         } else {
                             return "error";

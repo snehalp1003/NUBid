@@ -35,7 +35,7 @@
 			</tr>
 			<tr>
 			    <td>MINIMUM BID PRICE ($):</td>
-			    <td><input type="text" name="newminbidprice" pattern="[0-9]+(\\.[0-9][0-9]?)?{10}" size="30" required="required"/></td>
+			    <td><input type="number" name="newminbidprice" min="1" step="0.01" size="30" required="required"/></td>
 			</tr>			
 			<tr>
 			    <td colspan="2"><input type="submit" value="Add Product" /></td>

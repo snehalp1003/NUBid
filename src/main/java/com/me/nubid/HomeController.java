@@ -19,7 +19,7 @@ public class HomeController {
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index() {	
-	    logger.info("*********** Login Page of NUBids ! ***********");
+	    logger.info("*********** Login Page of NUBid ! ***********");
 		return "user-login";
 	}
 	

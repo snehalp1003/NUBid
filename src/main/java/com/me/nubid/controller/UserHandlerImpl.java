@@ -59,28 +59,36 @@ public class UserHandlerImpl implements UserHandler {
                         .checkIfValidEmail(user.getUserEmailAddress())) {
                     log.error(
                             "********** Email address not in correct format !! **********");
-                    return "error";
+                    return "error-create";
                 } else if (!UtilityService
                         .checkIfValidPassword(user.getUserPassword())) {
                     log.error(
                             "********** Password not in correct format !! **********");
-                    return "error";
+                    return "error-create";
                 } else if (!UtilityService
                         .checkIfValidPhoneNum(user.getUserPhoneNum())) {
                     log.error(
                             "********** Phone number not in correct format !! **********");
-                    return "error";
+                    return "error-create";
                 } else if (!UtilityService
                         .checkStringNotNull(user.getUserRole())) {
                     log.error("********** User Role is missing !! **********");
                 } else {
                     try {
-                        user.setUserUuid(UtilityService.generateUuid());
-                        user.setUserPassword(UtilityService
-                                .hashPassword(user.getUserPassword()));
-                        User newUser = databasePlugger.addNewUser(user);
-                        if (newUser != null) {
-                            return "user-createsuccessful";
+                        User userExists = databasePlugger
+                                .getUserDetails(user.getUserEmailAddress());
+                        if (userExists != null
+                                && userExists.getUserEmailAddress()
+                                        .equals(user.getUserEmailAddress())) {
+                            return "error-create";
+                        } else {
+                            user.setUserUuid(UtilityService.generateUuid());
+                            user.setUserPassword(UtilityService
+                                    .hashPassword(user.getUserPassword()));
+                            User newUser = databasePlugger.addNewUser(user);
+                            if (newUser != null) {
+                                return "user-createsuccessful";
+                            }
                         }
                     } catch (Exception e) {
                         log.error(
@@ -91,12 +99,12 @@ public class UserHandlerImpl implements UserHandler {
             } else {
                 log.error(
                         "********** Email address or password empty !! **********");
-                return "error";
+                return "error-create";
             }
         }
 
         log.error("********** Request is empty !! **********");
-        return "error";
+        return "error-create";
     }
 
     @Override
@@ -106,7 +114,7 @@ public class UserHandlerImpl implements UserHandler {
                 && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
-            if(user.getUserRole().equals("admin")) {
+            if (user.getUserRole().equals("admin")) {
                 return "admin-update";
             }
             return "user-update";
@@ -199,7 +207,7 @@ public class UserHandlerImpl implements UserHandler {
                                 return "admin-dashboard";
                             }
                             return "user-dashboard";
-                        } else if(u==null) {
+                        } else if (u == null) {
                             log.error(
                                     "********** User not found !! **********");
                             return "error-login";

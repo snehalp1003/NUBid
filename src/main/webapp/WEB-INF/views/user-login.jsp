@@ -41,7 +41,9 @@
 
 <body>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
-<h1> NUBid </h1>
+<h1>
+	<img src ="https://storage-prtl-co.imgix.net/endor/organisations/11238/logos/1556893197_nu_mononu_cmyk_rb.jpg" width="100" height="100">
+ NUBid </h1>
 <form action="${contextPath}/v1/user/home.htm" method="POST"> 
 		<table>
 		<tr>
