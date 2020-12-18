@@ -7,11 +7,16 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.mindrot.jbcrypt.BCrypt;
+
+import com.me.nubid.model.User;
 
 /**
  * @author Snehal Patel
@@ -108,5 +113,11 @@ public class UtilityService {
         email.setMsg("The item has been sold to you at your bid price !");
         email.addTo("snehalp1003@gmail.com");
         email.send();
+    }
+    
+    public static String getCurrentUserRole(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User u = (User) session.getAttribute("currentuser");
+        return u.getUserRole();
     }
 }

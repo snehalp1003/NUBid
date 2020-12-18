@@ -36,10 +36,17 @@ public class ProductHandlerImpl implements ProductHandler {
     @Override
     public String getProductCreateForm(HttpServletRequest request)
             throws IOException {
-        if(request!=null && request.getSession() != null && request.getSession().getAttribute("currentuser") != null) {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             return "product-create";
         }
-        log.error("********** Request is empty or Session is invalid !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
 
@@ -47,6 +54,11 @@ public class ProductHandlerImpl implements ProductHandler {
     public String addNewProduct(HttpServletRequest request) throws IOException {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
 
@@ -95,17 +107,25 @@ public class ProductHandlerImpl implements ProductHandler {
             throws IOException {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String prodId = request.getParameter("acceptedProdId");
             String buyerEmail = request.getParameter("acceptedBidderEmail");
-            Double acceptedOfferPrice = (Double.parseDouble(request.getParameter("acceptedOfferPrice")));
+            Double acceptedOfferPrice = (Double
+                    .parseDouble(request.getParameter("acceptedOfferPrice")));
 
             if (UtilityService.checkStringNotNull(prodId)) {
                 try {
-                    User buyerDetails = databasePlugger.getUserDetails(buyerEmail);
+                    User buyerDetails = databasePlugger
+                            .getUserDetails(buyerEmail);
                     Product prod = databasePlugger.getProduct(prodId);
-                    if(!UtilityService.checkStringNotNull(prod.getProdBuyerId())) {
+                    if (!UtilityService
+                            .checkStringNotNull(prod.getProdBuyerId())) {
                         prod.setProdBuyerId(buyerDetails.getUserUuid());
                         prod.setProdFinalPrice((acceptedOfferPrice));
                         prod.setProdEndDate(new Date());
@@ -139,6 +159,11 @@ public class ProductHandlerImpl implements ProductHandler {
     public String deleteProduct(HttpServletRequest request) throws IOException {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             String prodId = request.getParameter("prodId");
             if (UtilityService.checkStringNotNull(prodId)) {
                 try {
@@ -165,6 +190,11 @@ public class ProductHandlerImpl implements ProductHandler {
             throws IOException {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
@@ -194,6 +224,11 @@ public class ProductHandlerImpl implements ProductHandler {
             throws IOException {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
@@ -223,15 +258,22 @@ public class ProductHandlerImpl implements ProductHandler {
     @Override
     public String searchProducts(HttpServletRequest request)
             throws IOException {
-        if(request != null && request.getSession() != null
+        if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("user")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String key = request.getParameter("category");
-            if(UtilityService.checkStringNotNull(key)) {
+            if (UtilityService.checkStringNotNull(key)) {
                 try {
-                    List<Product> searchProductList = databasePlugger.searchProducts(key, user.getUserUuid());
-                    session.setAttribute("productsForPurchase", searchProductList);
+                    List<Product> searchProductList = databasePlugger
+                            .searchProducts(key, user.getUserUuid());
+                    session.setAttribute("productsForPurchase",
+                            searchProductList);
                     return "product-purchasedashboard";
                 } catch (Exception e) {
                     log.error(

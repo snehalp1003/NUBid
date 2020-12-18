@@ -265,6 +265,11 @@ public class UserHandlerImpl implements UserHandler {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if(uRole.equals("user")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             try {
                 allUsers = databasePlugger.getAllUsers();
                 session.setAttribute("allusers", allUsers);

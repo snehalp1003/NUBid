@@ -41,6 +41,11 @@ public class BidHandlerImpl implements BidHandler {
     public String placeBid(HttpServletRequest request) throws IOException {
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
@@ -102,6 +107,12 @@ public class BidHandlerImpl implements BidHandler {
 
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
@@ -145,6 +156,11 @@ public class BidHandlerImpl implements BidHandler {
         List<AdminBidView> allOpenBids = new ArrayList<AdminBidView>();
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("user")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             try {
                 allOpenBids = databasePlugger.viewAllOpenBids();
@@ -167,6 +183,11 @@ public class BidHandlerImpl implements BidHandler {
         List<AdminBidView> allClosedBids = new ArrayList<AdminBidView>();
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("admin")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             try {
                 allClosedBids = databasePlugger.viewAllClosedBids();
@@ -188,18 +209,25 @@ public class BidHandlerImpl implements BidHandler {
         List<AdminBidView> bidSearchList = new ArrayList<AdminBidView>();
         if (request != null && request.getSession() != null
                 && request.getSession().getAttribute("currentuser") != null) {
+            String uRole = UtilityService.getCurrentUserRole(request);
+            if (uRole.equals("user")) {
+                log.error("********** Unauthorized user ! **********");
+                return "error";
+            }
             HttpSession session = request.getSession();
             String category = request.getParameter("searchcategory");
             String bidStatus = request.getParameter("searchbidstatus");
             try {
-                if(!UtilityService.checkStringNotNull(category) || !UtilityService.checkStringNotNull(bidStatus)) {
+                if (!UtilityService.checkStringNotNull(category)
+                        || !UtilityService.checkStringNotNull(bidStatus)) {
                     log.error(
                             "********** Product Category or Bid Status Null !! **********");
                     return "error";
                 } else {
-                    bidSearchList = databasePlugger.searchForBids(category, bidStatus);
+                    bidSearchList = databasePlugger.searchForBids(category,
+                            bidStatus);
                     session.setAttribute("searchbidlist", bidSearchList);
-                    if(bidStatus.equals("open")) {
+                    if (bidStatus.equals("open")) {
                         return "admin-searchopenbids";
                     }
                     return "admin-searchclosedbids";
@@ -213,6 +241,6 @@ public class BidHandlerImpl implements BidHandler {
         log.error(
                 "********** Request is empty or Session is invalid !! **********");
         return "error";
-    
+
     }
 }
