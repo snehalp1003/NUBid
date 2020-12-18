@@ -43,7 +43,15 @@
 			<tr>
 			    <td>DEPARTMENT:</td>
 			    <td><input type="text" name="newdept"  maxlength="20" size="30"/></td>
-			</tr>			
+			</tr>
+			<tr>
+				<td>ROLE:</td>
+				<td>
+					<select name="newrole" required="required">
+						<option value="admin">Admin</option>
+			    		<option value="user">User</option>
+					</select>
+				</td>		
 			<tr>
 			    <td colspan="2"><input type="submit" value="Create Account" /></td>
 			</tr>					

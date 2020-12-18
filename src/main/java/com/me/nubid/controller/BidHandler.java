@@ -32,5 +32,17 @@ public interface BidHandler {
     @RequestMapping(value = "/v1/bids/view.htm", method = RequestMethod.GET)
     public String fetchBidsForProduct(HttpServletRequest request)
             throws IOException;
+    
+    @RequestMapping(value = "/v1/view/openbids.htm", method = RequestMethod.GET)
+    public String viewAllOpenBids(HttpServletRequest request)
+            throws IOException;
+    
+    @RequestMapping(value = "/v1/view/closedbids.htm", method = RequestMethod.GET)
+    public String viewAllClosedBids(HttpServletRequest request)
+            throws IOException;
+    
+    @RequestMapping(value = "/v1/bid/search.htm", method = RequestMethod.POST)
+    public String bidSearch(HttpServletRequest request)
+            throws IOException;
 
 }

@@ -4,6 +4,8 @@
 package com.me.nubid.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,12 +13,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.me.nubid.model.AdminUserView;
 import com.me.nubid.model.Login;
 import com.me.nubid.model.User;
 import com.me.nubid.service.DatabasePlugger;
@@ -52,6 +51,7 @@ public class UserHandlerImpl implements UserHandler {
             user.setUserAddress(request.getParameter("newaddress"));
             user.setUserCollege(request.getParameter("newcollege"));
             user.setUserDept(request.getParameter("newdept"));
+            user.setUserRole(request.getParameter("newrole"));
             if (UtilityService.checkStringNotNull(user.getUserEmailAddress())
                     && UtilityService
                             .checkStringNotNull(user.getUserPassword())) {
@@ -70,6 +70,9 @@ public class UserHandlerImpl implements UserHandler {
                     log.error(
                             "********** Phone number not in correct format !! **********");
                     return "error";
+                } else if (!UtilityService
+                        .checkStringNotNull(user.getUserRole())) {
+                    log.error("********** User Role is missing !! **********");
                 } else {
                     try {
                         user.setUserUuid(UtilityService.generateUuid());
@@ -95,17 +98,28 @@ public class UserHandlerImpl implements UserHandler {
         log.error("********** Request is empty !! **********");
         return "error";
     }
-    
+
     @Override
     public String getUserUpdateForm(HttpServletRequest request)
             throws IOException {
-        return "user-update";
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("currentuser");
+            if(user.getUserRole().equals("admin")) {
+                return "admin-update";
+            }
+            return "user-update";
+        }
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
+        return "error";
     }
 
     @Override
-    public String updateUser(HttpServletRequest request)
-            throws IOException {
-        if(request!=null) {
+    public String updateUser(HttpServletRequest request) throws IOException {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             user.setUserFirstName(request.getParameter("updatefname"));
@@ -114,9 +128,10 @@ public class UserHandlerImpl implements UserHandler {
             user.setUserAddress(request.getParameter("updateaddress"));
             user.setUserCollege(request.getParameter("updatecollege"));
             user.setUserDept(request.getParameter("updatedept"));
-            
+
             if (UtilityService.checkStringNotNull(user.getUserEmailAddress())) {
-                if (!UtilityService.checkIfValidEmail(user.getUserEmailAddress())) {
+                if (!UtilityService
+                        .checkIfValidEmail(user.getUserEmailAddress())) {
                     log.error(
                             "********** Email address not in correct format !! **********");
                     return "error";
@@ -129,7 +144,7 @@ public class UserHandlerImpl implements UserHandler {
                     try {
                         Boolean b = databasePlugger
                                 .updateUser(user.getUserUuid(), user);
-                        if(b) {
+                        if (b) {
                             session.setAttribute("currentuser", user);
                             return "user-updatesuccessful";
                         } else {
@@ -146,37 +161,52 @@ public class UserHandlerImpl implements UserHandler {
                 return "error";
             }
         }
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
 
     @Override
     public String fetchUserDetails(HttpServletRequest request)
             throws IOException {
-        if(request != null) {
+        if (request != null) {
             Login login = new Login();
             login.setUserEmailAddress(request.getParameter("username"));
             login.setUserPassword(request.getParameter("password"));
-            
+            login.setUserRole(request.getParameter("role"));
+
             if (UtilityService.checkStringNotNull(login.getUserEmailAddress())
-                    && UtilityService.checkStringNotNull(login.getUserPassword())) {
+                    && UtilityService
+                            .checkStringNotNull(login.getUserPassword())
+                    && UtilityService.checkStringNotNull(login.getUserRole())) {
                 if (!UtilityService
                         .checkIfValidEmail(login.getUserEmailAddress())) {
                     log.error(
                             "********** Email address not in correct format !! **********");
-                    return "error";
+                    return "error-login";
                 } else {
                     try {
                         User u = databasePlugger.getUserDetails(login);
-                        if (u != null && UtilityService.checkPassword(login.getUserPassword(),
-                                u.getUserPassword())) {
+                        if (u != null
+                                && UtilityService.checkPassword(
+                                        login.getUserPassword(),
+                                        u.getUserPassword())
+                                && u.getUserRole()
+                                        .equals(login.getUserRole())) {
                             HttpSession session = request.getSession(true);
                             session.setAttribute("currentuser", u);
+                            if (u.getUserRole().equals("admin")) {
+                                return "admin-dashboard";
+                            }
                             return "user-dashboard";
+                        } else if(u==null) {
+                            log.error(
+                                    "********** User not found !! **********");
+                            return "error-login";
                         } else {
                             log.error(
-                            "********** Password Incorrect !! **********");
-                            return "error";
+                                    "********** Incorrect Role Selection or Password !! **********");
+                            return "error-login";
                         }
                     } catch (Exception e) {
                         log.error(
@@ -187,18 +217,19 @@ public class UserHandlerImpl implements UserHandler {
             } else {
                 log.error(
                         "********** Email address or password is empty !! **********");
-                return "error";
+                return "error-login";
             }
         }
-        
-        log.error("********** Request is empty !! **********");
-        return "error";
+
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
+        return "error-login";
     }
-    
+
     @Override
     public String logoutUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if(session!=null){
+        if (session != null) {
             session.invalidate();
         }
         return "user-login";
@@ -206,6 +237,38 @@ public class UserHandlerImpl implements UserHandler {
 
     @Override
     public String goBack(HttpServletRequest request) throws IOException {
-        return "user-dashboard";
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
+            HttpSession session = request.getSession();
+            User u = (User) session.getAttribute("currentuser");
+            if (u.getUserRole().equals("admin")) {
+                return "admin-dashboard";
+            }
+            return "user-dashboard";
+        }
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
+        return "error";
+    }
+
+    @Override
+    public String getAllUsers(HttpServletRequest request) throws IOException {
+        List<AdminUserView> allUsers = new ArrayList<AdminUserView>();
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
+            HttpSession session = request.getSession();
+            try {
+                allUsers = databasePlugger.getAllUsers();
+                session.setAttribute("allusers", allUsers);
+                return "admin-allusers";
+            } catch (Exception e) {
+                log.error(
+                        "********** Error while fetching all users !! **********"
+                                + e.getMessage());
+            }
+        }
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
+        return "error";
     }
 }

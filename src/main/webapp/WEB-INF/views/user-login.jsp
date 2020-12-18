@@ -53,6 +53,15 @@
 		    <td>PASSWORD:</td>
 		    <td><input type="password" name="password" id="password" maxlength="50" size="30" required="required"/></td>
 		</tr>
+		<tr>
+			<td>ROLE:</td>
+			<td>
+				<select name="role" required="required">
+					<option value="admin">Admin</option>
+			   		<option value="user">User</option>
+				</select>
+			</td>		
+		<tr>
 		
 		<tr>
 		    <td colspan="2"><input type="submit" name="action" value="Login" /></td>

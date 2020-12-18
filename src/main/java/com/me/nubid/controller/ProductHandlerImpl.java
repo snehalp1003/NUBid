@@ -8,17 +8,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.me.nubid.model.Product;
 import com.me.nubid.model.User;
@@ -41,12 +36,17 @@ public class ProductHandlerImpl implements ProductHandler {
     @Override
     public String getProductCreateForm(HttpServletRequest request)
             throws IOException {
-        return "product-create";
+        if(request!=null && request.getSession() != null && request.getSession().getAttribute("currentuser") != null) {
+            return "product-create";
+        }
+        log.error("********** Request is empty or Session is invalid !! **********");
+        return "error";
     }
 
     @Override
     public String addNewProduct(HttpServletRequest request) throws IOException {
-        if (request != null) {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
 
@@ -85,14 +85,16 @@ public class ProductHandlerImpl implements ProductHandler {
                 }
             }
         }
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
 
     @Override
     public String updateProductOnAcceptBidOffer(HttpServletRequest request)
             throws IOException {
-        if (request != null) {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String prodId = request.getParameter("acceptedProdId");
@@ -127,13 +129,15 @@ public class ProductHandlerImpl implements ProductHandler {
                 return "error";
             }
         }
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
 
     @Override
     public String deleteProduct(HttpServletRequest request) throws IOException {
-        if (request != null) {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             String prodId = request.getParameter("prodId");
             if (UtilityService.checkStringNotNull(prodId)) {
                 try {
@@ -150,14 +154,16 @@ public class ProductHandlerImpl implements ProductHandler {
                 return "error";
             }
         }
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
 
     @Override
     public String viewProductsForPurchase(HttpServletRequest request)
             throws IOException {
-        if (request != null) {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
@@ -177,14 +183,16 @@ public class ProductHandlerImpl implements ProductHandler {
                 return "error";
             }
         }
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
 
     @Override
     public String viewProductsForSelling(HttpServletRequest request)
             throws IOException {
-        if (request != null) {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
@@ -206,14 +214,16 @@ public class ProductHandlerImpl implements ProductHandler {
             }
         }
 
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
 
     @Override
     public String searchProducts(HttpServletRequest request)
             throws IOException {
-        if(request != null) {
+        if(request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String key = request.getParameter("category");
@@ -232,9 +242,8 @@ public class ProductHandlerImpl implements ProductHandler {
                 return "error";
             }
         }
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
-    
-    
 }

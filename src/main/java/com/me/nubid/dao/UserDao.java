@@ -3,10 +3,14 @@
  */
 package com.me.nubid.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.me.nubid.model.AdminUserView;
 import com.me.nubid.model.User;
 
 /**
@@ -28,7 +32,8 @@ public class UserDao extends Dao {
             user.setUserAddress(u.getUserAddress());
             user.setUserPhoneNum(u.getUserPhoneNum());
             user.setUserCollege(u.getUserCollege());
-            user.setUserDept(u.getUserDept());       
+            user.setUserDept(u.getUserDept());  
+            user.setUserRole(u.getUserRole());
             getSession().save("User", u);
             commit();
             close();
@@ -86,5 +91,33 @@ public class UserDao extends Dao {
             log.error("Error while finding the user using email and password");
         }
         return null;
+    }
+    
+    public List<AdminUserView> getAllUsers() {
+        List<AdminUserView> allUsers = new ArrayList<AdminUserView>();
+        try {
+            Query query;
+            begin();
+            query = getSession().createQuery("select userEmailAddress, userFirstName, userLastName from User where userRole='user'");
+            List<Object[]> result = query.list();
+            
+            if (result != null && !result.isEmpty()) {
+                for (Object[] r : result) {
+                    AdminUserView auv = new AdminUserView();
+                    auv.setUserEmail((String) r[0]);
+                    auv.setUserFname((String) r[1]);
+                    auv.setUserLname((String) r[2]);
+                    
+                    allUsers.add(auv);
+                }
+            }
+            commit();
+            close();
+            return allUsers;
+        } catch(Exception e) {
+            rollback();
+            log.error("Error while fetching all users");
+        }
+        return allUsers;
     }
 }

@@ -4,7 +4,9 @@
 package com.me.nubid.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,12 +15,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import com.me.nubid.model.AdminBidView;
 import com.me.nubid.model.Bid;
 import com.me.nubid.model.Product;
 import com.me.nubid.model.User;
@@ -40,7 +39,8 @@ public class BidHandlerImpl implements BidHandler {
 
     @Override
     public String placeBid(HttpServletRequest request) throws IOException {
-        if (request != null) {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
@@ -61,11 +61,13 @@ public class BidHandlerImpl implements BidHandler {
                     try {
                         Product prod = databasePlugger
                                 .getProduct(request.getParameter("prodId"));
-                        if(bid.getBidPrice().compareTo(prod.getProdMinPrice()) < 0) {
+                        if (bid.getBidPrice()
+                                .compareTo(prod.getProdMinPrice()) < 0) {
                             log.error(
                                     "********** Bid Price cannot be less than the minimum bid price !! **********");
                             return "error";
-                        } else if(!UtilityService.checkStringNotNull(prod.getProdBuyerId())) {
+                        } else if (!UtilityService
+                                .checkStringNotNull(prod.getProdBuyerId())) {
                             String bidId = databasePlugger.bidPresent(
                                     bid.getBidderId(), bid.getBidProdId());
                             if (UtilityService.checkStringNotNull(bidId)) {
@@ -79,7 +81,7 @@ public class BidHandlerImpl implements BidHandler {
                         } else {
                             return "bid-cannotacceptoffer";
                         }
-                    
+
                     } catch (Exception e) {
                         log.error(
                                 "********** Error while placing bid !! **********"
@@ -89,7 +91,8 @@ public class BidHandlerImpl implements BidHandler {
             }
         }
 
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
     }
 
@@ -97,7 +100,8 @@ public class BidHandlerImpl implements BidHandler {
     public String fetchBidsForProduct(HttpServletRequest request)
             throws IOException {
 
-        if (request != null) {
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentuser");
             String uuid = user.getUserUuid();
@@ -130,7 +134,85 @@ public class BidHandlerImpl implements BidHandler {
                 return "error";
             }
         }
-        log.error("********** Request is empty !! **********");
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
         return "error";
+    }
+
+    @Override
+    public String viewAllOpenBids(HttpServletRequest request)
+            throws IOException {
+        List<AdminBidView> allOpenBids = new ArrayList<AdminBidView>();
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
+            HttpSession session = request.getSession();
+            try {
+                allOpenBids = databasePlugger.viewAllOpenBids();
+                session.setAttribute("allopenbids", allOpenBids);
+                return "admin-allopenbids";
+            } catch (Exception e) {
+                log.error(
+                        "********** Error while fetching all open bids !! **********"
+                                + e.getMessage());
+            }
+        }
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
+        return "error";
+    }
+
+    @Override
+    public String viewAllClosedBids(HttpServletRequest request)
+            throws IOException {
+        List<AdminBidView> allClosedBids = new ArrayList<AdminBidView>();
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
+            HttpSession session = request.getSession();
+            try {
+                allClosedBids = databasePlugger.viewAllClosedBids();
+                session.setAttribute("allclosedbids", allClosedBids);
+                return "admin-allclosedbids";
+            } catch (Exception e) {
+                log.error(
+                        "********** Error while fetching all closed bids !! **********"
+                                + e.getMessage());
+            }
+        }
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
+        return "error";
+    }
+
+    @Override
+    public String bidSearch(HttpServletRequest request) throws IOException {
+        List<AdminBidView> bidSearchList = new ArrayList<AdminBidView>();
+        if (request != null && request.getSession() != null
+                && request.getSession().getAttribute("currentuser") != null) {
+            HttpSession session = request.getSession();
+            String category = request.getParameter("searchcategory");
+            String bidStatus = request.getParameter("searchbidstatus");
+            try {
+                if(!UtilityService.checkStringNotNull(category) || !UtilityService.checkStringNotNull(bidStatus)) {
+                    log.error(
+                            "********** Product Category or Bid Status Null !! **********");
+                    return "error";
+                } else {
+                    bidSearchList = databasePlugger.searchForBids(category, bidStatus);
+                    session.setAttribute("searchbidlist", bidSearchList);
+                    if(bidStatus.equals("open")) {
+                        return "admin-searchopenbids";
+                    }
+                    return "admin-searchclosedbids";
+                }
+            } catch (Exception e) {
+                log.error(
+                        "********** Error while searching for bids !! **********"
+                                + e.getMessage());
+            }
+        }
+        log.error(
+                "********** Request is empty or Session is invalid !! **********");
+        return "error";
+    
     }
 }

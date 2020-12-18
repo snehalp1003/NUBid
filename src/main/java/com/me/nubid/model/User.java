@@ -5,8 +5,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -35,6 +33,9 @@ public class User {
     private String userPhoneNum;
     private String userCollege;
     private String userDept;
+    
+    @Column(nullable=false) 
+    private String userRole;
     
     @OneToMany(targetEntity = Product.class, cascade=CascadeType.ALL)
     @JoinColumn(name="prodSellerId" , referencedColumnName = "userUuid")
@@ -102,4 +103,10 @@ public class User {
     public void setUserDept(String userDept) {
         this.userDept = userDept;
     }
+    public String getUserRole() {
+        return userRole;
+    }
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }    
 }

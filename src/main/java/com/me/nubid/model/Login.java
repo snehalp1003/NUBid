@@ -10,6 +10,7 @@ public class Login {
     
     private String userEmailAddress;
     private String userPassword;
+    private String userRole;
     
     public String getUserEmailAddress() {
         return userEmailAddress;
@@ -23,6 +24,10 @@ public class Login {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
-    
-    
+    public String getUserRole() {
+        return userRole;
+    }
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }    
 }

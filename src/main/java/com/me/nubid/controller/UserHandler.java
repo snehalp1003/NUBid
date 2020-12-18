@@ -1,6 +1,7 @@
 package com.me.nubid.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -46,4 +47,7 @@ public interface UserHandler {
 
     @RequestMapping(value = "/v1/user/home.htm", method = RequestMethod.GET)
     public String goBack(HttpServletRequest request) throws IOException;
+    
+    @RequestMapping(value = "/v1/view/allusers.htm", method = RequestMethod.GET)
+    public String getAllUsers(HttpServletRequest request) throws IOException;
 }

@@ -3,6 +3,7 @@
  */
 package com.me.nubid.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.me.nubid.dao.BidDao;
 import com.me.nubid.dao.ProductDao;
 import com.me.nubid.dao.UserDao;
+import com.me.nubid.model.AdminBidView;
+import com.me.nubid.model.AdminUserView;
 import com.me.nubid.model.Bid;
 import com.me.nubid.model.Login;
 import com.me.nubid.model.Product;
@@ -106,6 +109,20 @@ public class DatabasePlugger {
             }
         }
         return null;
+    }
+    
+    public List<AdminUserView> getAllUsers() {
+        List<AdminUserView> allUsers = new ArrayList<AdminUserView>();
+        try {
+            allUsers = userDao.getAllUsers();
+            log.info("********** FETCHED ALL USERS **********");
+            return allUsers;
+        } catch(Exception e) {
+            log.error("********** ERROR OCCURED WHEN FETCHING ALL USERS **********");
+            log.error("Exception occurred when Fetching All Users: "
+                    + e.getMessage());
+        }
+        return allUsers;
     }
 
     public Product addNewProduct(Product prod) {
@@ -298,5 +315,56 @@ public class DatabasePlugger {
             }
         }
         return getAllBidsForProd;
+    }
+    
+    public List<AdminBidView> viewAllOpenBids() {
+        List<AdminBidView> allOpenBids = new ArrayList<AdminBidView>();
+        try {
+            allOpenBids = bidDao.viewAllOpenBids();
+            log.info("********** FETCHED ALL OPEN BIDS **********");
+            return allOpenBids;
+        } catch(Exception e) {
+            log.error("********** ERROR OCCURED WHEN FETCHING ALL OPEN BIDS **********");
+            log.error("Exception occurred when Fetching All Open Bids: "
+                    + e.getMessage());
+        }
+        return allOpenBids;
+    }
+    
+    public List<AdminBidView> viewAllClosedBids() {
+        List<AdminBidView> allClosedBids = new ArrayList<AdminBidView>();
+        try {
+            allClosedBids = bidDao.viewAllClosedBids();
+            log.info("********** FETCHED ALL CLOSED BIDS **********");
+            return allClosedBids;
+        } catch(Exception e) {
+            log.error("********** ERROR OCCURED WHEN FETCHING ALL CLOSED BIDS **********");
+            log.error("Exception occurred when Fetching All Closed Bids: "
+                    + e.getMessage());
+        }
+        return allClosedBids;
+    }
+    
+    public List<AdminBidView> searchForBids(String category, String bidStatus) {
+        List<AdminBidView> searchForBids = new ArrayList<AdminBidView>();
+        try {
+            if(bidStatus.equals("open")) {
+                searchForBids = bidDao.searchOpenBids(category);
+                log.info("********** SEARCHED AND RETURNED ALL OPEN BIDS **********");
+                return searchForBids;
+            } else if(bidStatus.equals("closed")) {
+                searchForBids = bidDao.searchClosedBids(category);
+                log.info("********** SEARCHED AND RETURNED ALL CLOSED BIDS **********");
+                return searchForBids;
+            } else {
+                log.error("********** INVALID BID STATUS ! **********");
+            }
+            
+        } catch(Exception e) {
+            log.error("********** ERROR OCCURED WHEN SEARCHING FOR BIDS **********");
+            log.error("Exception occurred when Searching for Bids: "
+                    + e.getMessage());
+        }
+        return searchForBids;
     }
 }
