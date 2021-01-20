@@ -107,9 +107,9 @@ public class UtilityService {
         email.setHostName("smtp.googlemail.com");
         email.setSmtpPort(465);
         email.setAuthenticator(
-                new DefaultAuthenticator("snailpatel2", "stupidhacker-_-"));
+                new DefaultAuthenticator("", ""));
         email.setSSLOnConnect(true);
-        email.setFrom("snailpatel2@gmail.com");
+        email.setFrom("");
         email.setSubject("Congratulations ! Bid Won !");
         email.setMsg("The item has been sold to you at your bid price !");
         email.addTo(buyerEmail);
