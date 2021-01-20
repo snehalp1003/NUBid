@@ -1,10 +1,8 @@
 # NUBid
-
-# Summary:
 NUBid is a Spring MVC web application with Hibernate annotations-based mappings for enhanced database interaction with MySQL. An open market platform which allows qualified Northeastern members to sell a product by offering them for bidding – allowing members to bid and sell to the highest bidder. Once an item is placed for sale, the auctioneer will start at a relatively low price to attract bidders. The price increases each time someone makes a new, higher bid until finally, no other bidders are willing to offer more than the most recent bid, and the highest bidder takes the item. An auction is considered complete when the seller accepts the highest bid offered and the buyer pays for the goods or services and takes possession of them.
 The framework is completely menu driven and user-friendly to give speedy and exact data. The application empowered users to get best deals on the price of the product. A user can enlist a product for selling and decide the minimum bidding price for it. He can also simultaneously act as a buyer and search for available products to purchase and place bids on them. All the CRUD operations were performed for the application.
 
-# Functionality:
+### Functionality:
 Every member on this platform should be registered with their NEU email address (@northeastern.edu) to ensure only valid Northeastern members have access to the site. They should also update their personal information on the portal.
   User Role-
     1. List an item for sale and provide item details, pictures and the base price for selling
@@ -18,7 +16,7 @@ Every member on this platform should be registered with their NEU email address 
     2. View all the closed bids on portal
     3. View all the registered members and their contact information on the portal and reach out to them incase of complaints
 
-# Technologies:
+### Technologies:
   1. Spring MVC, Hibernate, Maven, HTML, JSP
   2. Criteria for selection queries and HQL for save, update and delete
   3. Used Associations like oneToMany, ManyToOne etc
