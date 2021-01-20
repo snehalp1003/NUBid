@@ -4,14 +4,14 @@ The framework is completely menu driven and user-friendly to give speedy and exa
 
 ### Functionality:
 Every member on this platform should be registered with their NEU email address (@northeastern.edu) to ensure only valid Northeastern members have access to the site. They should also update their personal information on the portal.
-  User Role-
+ - User Role
     1. List an item for sale and provide item details, pictures and the base price for selling
     2. View products available for sale and the bids offered by others for purchase of an item
     3. Delete a sale listing
     4. In case of multiple people offering the same bid, seller is given the freedom to choose a buyer as per his convenience
     5. Send an email to buyer’s if his bid is accepted
     6. A bid is closed when an offer is accepted
-  Admin Role-
+ - Admin Role
     1. View all the open bids on portal
     2. View all the closed bids on portal
     3. View all the registered members and their contact information on the portal and reach out to them incase of complaints
